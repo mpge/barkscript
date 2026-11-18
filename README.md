@@ -1,9 +1,12 @@
 <p align="center">
-  <img src="assets/logo.png" alt="BarkScript. All bark. No byte." width="600">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo-light.png" alt="BarkScript. All bark. No byte." width="600">
+  </picture>
 </p>
 
 <p align="center">
-  <a href="https://mpge.github.io/barkscript/"><b>Playground</b></a> ·
+  <a href="https://barkscript.com"><b>Playground</b></a> ·
   <a href="docs/LANGUAGE.md"><b>Language guide</b></a> ·
   <a href="examples"><b>Examples</b></a> ·
   <a href="docs/GRAMMAR.md"><b>Grammar</b></a>
@@ -110,18 +113,22 @@ but never told him what to fetch.
 hint: name the fetch, like `fetch giveTreat()`
 ```
 
-```text
-dog.bark:18
-
-  17 | sit treats = 3
-  18 | sit double = good boy * 2
-     |              ^^^^^^^^
-
-"good boy" is not a number.
-```
-
 Typos get suggestions, `stay` can't be reassigned, blocks that never `end` are caught, and
 JavaScript habits (`return`, `&&`, `true`, `;`) get pointed at their BarkScript words.
+
+## On a web page
+
+No install, no build step. Load the script, then write BarkScript in your HTML:
+
+```html
+<script src="https://barkscript.com/barkscript.min.js"></script>
+
+<script type="text/barkscript">
+  woof "Hello from the page"
+</script>
+```
+
+Details in [docs/BROWSER.md](docs/BROWSER.md).
 
 ## CLI
 
@@ -146,6 +153,7 @@ More in [docs/CLI.md](docs/CLI.md), including the JavaScript API.
 |---|---|
 | [Language guide](docs/LANGUAGE.md) | Every feature, with examples the test suite runs |
 | [Grammar](docs/GRAMMAR.md) | The formal EBNF grammar and semantics |
+| [On a web page](docs/BROWSER.md) | The browser build: script tags, `data-output`, the `BarkScript` global |
 | [CLI and API](docs/CLI.md) | `bark run`, `compile`, `check`, and using the compiler from code |
 | [VS Code](editors/vscode) | Syntax highlighting (a TextMate grammar, so it works elsewhere too) |
 | [Contributing](CONTRIBUTING.md) | How the compiler is built and how to add to it |
@@ -153,3 +161,5 @@ More in [docs/CLI.md](docs/CLI.md), including the JavaScript API.
 ## License
 
 MIT
+
+<p align="center"><a href="https://barkscript.com">My dog made me build this.</a></p>

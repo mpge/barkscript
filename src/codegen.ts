@@ -387,6 +387,11 @@ class Generator {
         const call = `${callee}(${e.args.map((a) => this.expression(a, PREC.arrow)).join(', ')})`;
         return e.awaited ? this.wrap(`await ${call}`, PREC.unary, min) : call;
       }
+      case 'New': {
+        const callee = this.expression(e.callee, PREC.postfix);
+        const wrapped = e.callee.kind === 'Call' || e.callee.kind === 'Index' ? `(${callee})` : callee;
+        return `new ${wrapped}(${e.args.map((a) => this.expression(a, PREC.arrow)).join(', ')})`;
+      }
       case 'Member': {
         const object = e.object.kind === 'Number' ? `(${this.expression(e.object, 0)})` : this.expression(e.object, PREC.postfix);
         return IDENT.test(e.property) ? `${object}.${e.property}` : `${object}[${JSON.stringify(e.property)}]`;

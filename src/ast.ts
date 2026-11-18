@@ -60,6 +60,11 @@ export interface CallExpression extends Base {
   /** Set by the checker when the callee is an async `fetch`. */
   awaited?: boolean;
 }
+export interface NewExpression extends Base {
+  kind: 'New';
+  callee: Expression;
+  args: Expression[];
+}
 export interface MemberExpression extends Base {
   kind: 'Member';
   object: Expression;
@@ -105,6 +110,7 @@ export type Expression =
   | LogicalExpression
   | UnaryExpression
   | CallExpression
+  | NewExpression
   | MemberExpression
   | IndexExpression
   | ArrayLiteral

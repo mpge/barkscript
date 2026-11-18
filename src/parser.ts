@@ -585,7 +585,7 @@ class Parser {
   private startsExpression(token: Token): boolean {
     if (token.type === 'number' || token.type === 'string' || token.type === 'template' || token.type === 'identifier') return true;
     if (token.type === 'operator') return ['(', '[', '{', '-'].includes(token.value);
-    if (token.type === 'keyword') return ['good boy', 'good girl', 'bad dog', 'empty bowl', 'not', 'fetch', 'come here', 'beg'].includes(token.value);
+    if (token.type === 'keyword') return ['good boy', 'good girl', 'bad dog', 'empty bowl', 'not', 'fetch', 'come here', 'beg', 'new'].includes(token.value);
     return false;
   }
 
@@ -647,6 +647,21 @@ class Parser {
         }
         expr.comeHere = true;
         return expr;
+      }
+      case 'new': {
+        this.next();
+        let callee: AST.Expression = this.primary();
+        while (this.is('.', 'operator')) {
+          this.next();
+          const name = this.identifier((got) => `${DOG} expected a name after the \`.\`, but found ${describe(got)}.`);
+          callee = { kind: 'Member', object: callee, property: name.name, loc: callee.loc };
+        }
+        if (!this.is('(', 'operator')) {
+          throw new BarkError(`\`new\` needs parentheses after the name.`, loc(this.peek()), 'try `new Date()`');
+        }
+        this.next();
+        const args = this.arguments();
+        return { kind: 'New', callee, args, loc: loc(token) };
       }
       case 'beg': {
         this.next();

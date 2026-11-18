@@ -43,6 +43,7 @@ export const KEYWORDS = [
   'and',
   'or',
   'not',
+  'new',
 ] as const;
 
 /** Two-word keywords. The first word is reserved on its own. */

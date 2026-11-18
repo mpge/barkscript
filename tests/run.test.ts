@@ -118,6 +118,10 @@ describe('running programs', () => {
     expect(await output('woof number(" 42 "), number(""), number("dog")')).toBe('42 NaN NaN\n');
   });
 
+  it('constructs JavaScript objects with new', async () => {
+    expect(await output('stay s = new Set([1, 1, 2])\nwoof s.size, new Date(0).getTime()')).toBe('2 0\n');
+  });
+
   it('lets programs shadow console and process inside the host', async () => {
     expect(await output('sit console = 1\nwoof console')).toBe('1\n');
   });

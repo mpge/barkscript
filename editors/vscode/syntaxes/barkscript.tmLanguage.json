@@ -58,6 +58,7 @@
         { "match": "\\b(fetch)\\b", "name": "storage.type.function.barkscript" },
         { "match": "\\b(woof|beg)\\b", "name": "support.function.builtin.barkscript" },
         { "match": "\\b(and|or|not)\\b", "name": "keyword.operator.logical.barkscript" },
+        { "match": "\\b(new)\\b", "name": "keyword.operator.new.barkscript" },
         { "match": "\\b(ms|seconds?)\\b", "name": "keyword.other.unit.barkscript" }
       ]
     },

@@ -312,6 +312,14 @@ BarkScript compiles to JavaScript and can use its globals directly: `Math`, `JSO
 woof Math.max(3, 9), JSON.stringify({ dog: "Walter" }), isNaN(number("bone"))
 ```
 
+`new` constructs JavaScript objects, as you would expect.
+
+```bark
+stay seen = new Set(["Walter", "Biscuit", "Walter"])
+stay today = new Date()
+woof seen.size, today.getFullYear() > 2000
+```
+
 Two functions are built in:
 
 | Function | Does |
@@ -391,4 +399,5 @@ TypeError: Cannot read properties of null (reading 'name')
 | `good boy` / `bad dog` / `empty bowl` | `true` / `false` / `null` |
 | `a and b`, `a or b`, `not a` | `a && b`, `a \|\| b`, `!a` |
 | `a == b`, `a != b` | `a === b`, `a !== b` |
+| `new Date()` | `new Date()` |
 | `"Hi {name}"` | `` `Hi ${name}` `` |

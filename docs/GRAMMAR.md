@@ -39,13 +39,14 @@ Phrase keywords are two words separated by whitespace on the same line.
 | `bad dog` | false | `false` |
 | `empty bowl` | nothing | `null` |
 | `and`, `or`, `not` | logic | `&&`, `\|\|`, `!` |
+| `new` | construct a JavaScript object | `new` |
 
 Contextual words have meaning only in one position and are ordinary names everywhere else:
 `while`, `forever`, `each`, `in`, `from`, `to`, `by` (after `again`) and `second`, `seconds`,
 `ms` (after `wait`).
 
 Reserved words that cannot be used as names: `sit stay woof fetch come drop if otherwise again
-no leave wait beg play end good bad empty and or not`. Names may not start with `__`.
+no leave wait beg play end good bad empty and or not new`. Names may not start with `__`.
 Names that JavaScript reserves (`class`, `new`, `this`, ...) are allowed and get a trailing
 underscore in the output.
 
@@ -130,6 +131,7 @@ primary     = number | string | identifier
             | "{" , [ entry , { "," , entry } , [ "," ] ] , "}"
             | "come here" , postfix
             | "beg" , [ expression ]
+            | "new" , primary , { "." , identifier } , "(" , [ arguments ] , ")"
             | "fetch" , "(" , [ params ] , ")" , block ;  (* anonymous function *)
 entry       = ( identifier | string ) , ":" , expression ;
 ```

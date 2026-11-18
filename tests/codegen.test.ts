@@ -89,6 +89,10 @@ describe('code generation', () => {
     expect(body('sit f = fetch (x) drop it { v: x } end')).toBe('let f = (x) => ({ v: x });');
   });
 
+  it('compiles new', () => {
+    expect(body('stay d = new Date(2020, 1)\nstay m = new Map()')).toBe('const d = new Date(2020, 1);\nconst m = new Map();');
+  });
+
   it('renames names that JavaScript reserves', () => {
     expect(body('sit class = 1\nwoof class')).toBe('let class_ = 1;\nconsole.log(class_);');
   });

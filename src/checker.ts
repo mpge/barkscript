@@ -7,7 +7,11 @@ export const JS_GLOBALS = new Set([
   'Math', 'JSON', 'Date', 'Number', 'String', 'Boolean', 'Array', 'Object', 'Map', 'Set', 'Promise',
   'RegExp', 'Error', 'Symbol', 'BigInt', 'Intl', 'console', 'parseInt', 'parseFloat', 'isNaN',
   'isFinite', 'Infinity', 'NaN', 'undefined', 'globalThis', 'encodeURIComponent', 'decodeURIComponent',
-  'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'structuredClone',
+  'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'structuredClone', 'URL',
+  'URLSearchParams', 'TextEncoder', 'TextDecoder', 'queueMicrotask', 'atob', 'btoa',
+  // Browser globals, for programs that run on a web page.
+  'window', 'document', 'alert', 'confirm', 'prompt', 'navigator', 'location', 'history',
+  'localStorage', 'sessionStorage', 'performance', 'requestAnimationFrame', 'crypto',
 ]);
 
 const JS_LITERALS: Record<string, string> = {
@@ -376,6 +380,10 @@ class Checker {
       }
       case 'Call':
         this.call(e, scope);
+        return;
+      case 'New':
+        this.expression(e.callee, scope);
+        e.args.forEach((arg) => this.expression(arg, scope));
         return;
       case 'Member':
         this.expression(e.object, scope);

@@ -169,6 +169,13 @@ const invokedDirectly = (() => {
 })();
 
 if (invokedDirectly) {
+  // `bark run x.bark | head` closes the pipe early. That is the reader's choice, not a crash.
+  for (const stream of [process.stdout, process.stderr]) {
+    stream.on('error', (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EPIPE') process.exit(0);
+      throw error;
+    });
+  }
   main(process.argv.slice(2)).then(
     (code) => {
       process.exitCode = code;
