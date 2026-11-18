@@ -1,0 +1,11 @@
+export { compile, diagnose, type CompileOptions, type CompileResult } from './compiler.js';
+export { run, ExitSignal, type RunIO, type RunOptions, type RunResult } from './run.js';
+export { tokenize } from './lexer.js';
+export { parse } from './parser.js';
+export { check } from './checker.js';
+export { generate } from './codegen.js';
+export { BarkError, BarkRuntimeError, formatError, formatRuntimeError, DOG } from './errors.js';
+export { KEYWORDS, PHRASES, CONTEXTUAL, BUILTINS } from './tokens.js';
+export { VERSION } from './version.js';
+export type * as AST from './ast.js';
+export type { Token } from './tokens.js';

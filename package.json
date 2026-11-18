@@ -1,0 +1,61 @@
+{
+  "name": "barkscript",
+  "version": "0.1.0",
+  "description": "A programming language written in dog commands. Compiles to readable JavaScript. All bark. No byte.",
+  "keywords": [
+    "barkscript",
+    "programming-language",
+    "esolang",
+    "compiler",
+    "transpiler",
+    "dog",
+    "javascript"
+  ],
+  "license": "MIT",
+  "author": "Matthew Gros",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mpge/barkscript.git"
+  },
+  "homepage": "https://github.com/mpge/barkscript#readme",
+  "bugs": "https://github.com/mpge/barkscript/issues",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "bark": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "grammar",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "site:dev": "vite --config website/vite.config.ts",
+    "site:build": "vite build --config website/vite.config.ts",
+    "site:preview": "vite preview --config website/vite.config.ts",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "marked": "^15.0.12",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}

@@ -1,0 +1,23 @@
+# The example from the README: Walter and a limited supply of treats.
+sit dog = "Walter"
+sit treats = 3
+
+woof "Who's a good boy?"
+
+fetch giveTreat()
+    if treats > 0
+        woof "Here you go"
+        treats = treats - 1
+    otherwise
+        woof "No more treats"
+    end
+end
+
+again 3
+    come here giveTreat()
+end
+
+woof "{dog} has {treats} treats left."
+come here giveTreat()
+
+play dead

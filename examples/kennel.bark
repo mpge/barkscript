@@ -1,0 +1,30 @@
+# Lists, objects, unnamed fetches and a little bit of JavaScript.
+stay kennel = [
+    { name: "Walter", age: 3, goodBoy: good boy },
+    { name: "Biscuit", age: 7, goodBoy: good boy },
+    { name: "Pickles", age: 1, goodBoy: bad dog },
+]
+
+stay names = kennel.map(fetch (dog) drop it dog.name end)
+woof "In the kennel:", names.join(", ")
+
+sit total = 0
+again each dog in kennel
+    total += dog.age
+end
+woof "Average age: {Math.round(total / kennel.length)}"
+
+stay oldest = kennel.reduce(fetch (best, dog)
+    if dog.age > best.age
+        drop it dog
+    end
+    drop it best
+end)
+woof "Oldest: {oldest.name}"
+
+stay trouble = kennel.filter(fetch (dog) drop it not dog.goodBoy end)
+again each dog in trouble
+    woof "{dog.name} is on thin ice."
+end
+
+woof "Bones today:", Math.max(2, kennel.length)

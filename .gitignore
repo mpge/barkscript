@@ -1,0 +1,7 @@
+node_modules/
+dist/
+website/dist/
+coverage/
+*.log
+.DS_Store
+examples/*.js

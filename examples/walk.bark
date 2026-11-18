@@ -1,0 +1,13 @@
+# `wait` pauses the program. Functions that wait are compiled to async JavaScript.
+stay route = ["the gate", "the big tree", "the fire hydrant", "the park"]
+
+fetch walkTo(place)
+    woof "Walking to {place}..."
+    wait 300
+end
+
+again each stop in route
+    come here walkTo(stop)
+end
+
+woof "Home again. That was a good walk."

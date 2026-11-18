@@ -1,0 +1,2 @@
+# The smallest BarkScript program.
+woof "Hello, world!"

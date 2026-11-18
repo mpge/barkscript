@@ -1,0 +1,12 @@
+# FizzBuzz, the classic interview question, now asked of a dog.
+again n from 1 to 100
+    if n % 15 == 0
+        woof "FizzBuzz"
+    otherwise if n % 3 == 0
+        woof "Fizz"
+    otherwise if n % 5 == 0
+        woof "Buzz"
+    otherwise
+        woof n
+    end
+end
