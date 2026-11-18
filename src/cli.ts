@@ -23,7 +23,7 @@ Usage
   bark compile <file.bark>          write readable JavaScript next to the source
       -o, --out <file.js>           choose where the JavaScript goes
       --stdout                      print the JavaScript instead of writing a file
-  bark check <file.bark>            report problems without running anything
+  bark check <file.bark>...         report problems without running anything
   bark <file.bark>                  same as bark run
   bark --help                       show this help
   bark --version                    print the version
@@ -142,12 +142,22 @@ function compileCommand(args: string[], io: CliIO): number {
 }
 
 function checkCommand(args: string[], io: CliIO): number {
-  const file = load(args[0], io, 'check');
-  if (!file) return 1;
-  const error = diagnose(file.source);
-  if (error) return report(error, file.source, file.name, io);
-  io.stdout(`${file.name}: no problems. Good boy.\n`);
-  return 0;
+  if (args.length === 0) return load(undefined, io, 'check') ? 0 : 1;
+  let status = 0;
+  for (const arg of args) {
+    const file = load(arg, io, 'check');
+    if (!file) {
+      status = 1;
+      continue;
+    }
+    const error = diagnose(file.source);
+    if (error) {
+      status = report(error, file.source, file.name, io);
+      continue;
+    }
+    io.stdout(`${file.name}: no problems. Good boy.\n`);
+  }
+  return status;
 }
 
 const invokedDirectly = (() => {

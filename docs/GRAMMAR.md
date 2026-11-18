@@ -12,6 +12,8 @@ the compiler has a bug.
 - Indentation is not significant. Use it anyway; Walter appreciates it.
 - `#` starts a comment that runs to the end of the line.
 - Inside `( )`, `[ ]` and `{ }`, newlines are ignored, so long lists and calls can wrap.
+- `end` may share a line with the statement before it, so a short unnamed fetch fits on one
+  line: `fetch (x) drop it x * 2 end`.
 
 ## Keywords
 
@@ -43,7 +45,9 @@ Contextual words have meaning only in one position and are ordinary names everyw
 `ms` (after `wait`).
 
 Reserved words that cannot be used as names: `sit stay woof fetch come drop if otherwise again
-no leave wait beg play end good bad empty and or not`.
+no leave wait beg play end good bad empty and or not`. Names may not start with `__`.
+Names that JavaScript reserves (`class`, `new`, `this`, ...) are allowed and get a trailing
+underscore in the output.
 
 Built-in functions: `random(min, max)` returns a whole number between `min` and `max`
 inclusive. `number(value)` converts text to a number. Both names are reserved. JavaScript
@@ -87,9 +91,10 @@ statement   = declaration
             | "play dead"
             | assignment ;
 
-declaration = ( "sit" | "stay" ) , identifier , "=" , expression ;
+declaration = "sit" , identifier , [ "=" , expression ]
+            | "stay" , identifier , "=" , expression ;
 print       = "woof" , [ expression , { "," , expression } ] ;
-function    = "fetch" , identifier , "(" , [ params ] , ")" , block ;
+function    = "fetch" , identifier , "(" , [ params ] , ")" , newline , block ;
 params      = identifier , { "," , identifier } ;
 call        = "come here" , postfix ;                   (* postfix must end in a call *)
 return      = "drop it" , [ expression ] ;

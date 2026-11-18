@@ -1,0 +1,29 @@
+{
+  "name": "barkscript",
+  "displayName": "BarkScript",
+  "description": "Syntax highlighting for BarkScript (.bark). All bark. No byte.",
+  "version": "0.1.0",
+  "publisher": "mpge",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/mpge/barkscript.git", "directory": "editors/vscode" },
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Programming Languages"],
+  "icon": "icon.png",
+  "contributes": {
+    "languages": [
+      {
+        "id": "barkscript",
+        "aliases": ["BarkScript", "bark"],
+        "extensions": [".bark"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "barkscript",
+        "scopeName": "source.barkscript",
+        "path": "./syntaxes/barkscript.tmLanguage.json"
+      }
+    ]
+  }
+}

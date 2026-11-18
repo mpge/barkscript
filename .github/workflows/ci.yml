@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        node: [20, 22, 24]
+        include:
+          - os: windows-latest
+            node: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: CLI smoke test
+        shell: bash
+        run: |
+          node dist/cli.js --version
+          node dist/cli.js run examples/hello.bark | grep "Hello, world!"
+          node dist/cli.js check examples/*.bark
+          node dist/cli.js compile examples/fizzbuzz.bark -o /tmp/fizzbuzz.js
+          node /tmp/fizzbuzz.js | tail -1 | grep Buzz
+          printf '50\n' | node dist/cli.js run examples/guess.bark | head -2
+      - run: npm pack --dry-run

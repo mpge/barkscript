@@ -1,0 +1,91 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "BarkScript",
+  "scopeName": "source.barkscript",
+  "fileTypes": ["bark"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#string-double" },
+    { "include": "#string-single" },
+    { "include": "#fetch-declaration" },
+    { "include": "#keywords" },
+    { "include": "#constants" },
+    { "include": "#numbers" },
+    { "include": "#builtins" },
+    { "include": "#calls" },
+    { "include": "#operators" }
+  ],
+  "repository": {
+    "comment": {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.barkscript"
+    },
+    "string-double": {
+      "begin": "\"",
+      "end": "\"",
+      "name": "string.quoted.double.barkscript",
+      "patterns": [
+        { "match": "\\\\[ntr\\\\\"'{}0]", "name": "constant.character.escape.barkscript" },
+        {
+          "begin": "\\{",
+          "end": "\\}",
+          "beginCaptures": { "0": { "name": "punctuation.section.interpolation.begin.barkscript" } },
+          "endCaptures": { "0": { "name": "punctuation.section.interpolation.end.barkscript" } },
+          "contentName": "meta.embedded.expression.barkscript",
+          "patterns": [{ "include": "$self" }]
+        }
+      ]
+    },
+    "string-single": {
+      "begin": "'",
+      "end": "'",
+      "name": "string.quoted.single.barkscript",
+      "patterns": [{ "match": "\\\\[ntr\\\\\"'{}0]", "name": "constant.character.escape.barkscript" }]
+    },
+    "fetch-declaration": {
+      "match": "\\b(fetch)\\s+([\\p{L}_][\\p{L}\\p{N}_]*)\\s*(?=\\()",
+      "captures": {
+        "1": { "name": "storage.type.function.barkscript" },
+        "2": { "name": "entity.name.function.barkscript" }
+      }
+    },
+    "keywords": {
+      "patterns": [
+        { "match": "\\b(come\\s+here)\\b", "name": "keyword.other.call.barkscript" },
+        { "match": "\\b(drop\\s+it|play\\s+dead|leave\\s+it|no|wait)\\b", "name": "keyword.control.flow.barkscript" },
+        { "match": "\\b(if|otherwise|again|end|forever|while|each|in|from|to|by)\\b", "name": "keyword.control.barkscript" },
+        { "match": "\\b(sit|stay)\\b", "name": "storage.type.barkscript" },
+        { "match": "\\b(fetch)\\b", "name": "storage.type.function.barkscript" },
+        { "match": "\\b(woof|beg)\\b", "name": "support.function.builtin.barkscript" },
+        { "match": "\\b(and|or|not)\\b", "name": "keyword.operator.logical.barkscript" },
+        { "match": "\\b(ms|seconds?)\\b", "name": "keyword.other.unit.barkscript" }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        { "match": "\\b(good\\s+boy|good\\s+girl)\\b", "name": "constant.language.boolean.true.barkscript" },
+        { "match": "\\b(bad\\s+dog)\\b", "name": "constant.language.boolean.false.barkscript" },
+        { "match": "\\b(empty\\s+bowl)\\b", "name": "constant.language.null.barkscript" }
+      ]
+    },
+    "numbers": {
+      "match": "\\b[0-9][0-9_]*(\\.[0-9][0-9_]*)?\\b",
+      "name": "constant.numeric.barkscript"
+    },
+    "builtins": {
+      "match": "\\b(random|number)\\b(?=\\s*\\()",
+      "name": "support.function.barkscript"
+    },
+    "calls": {
+      "match": "\\b([\\p{L}_][\\p{L}\\p{N}_]*)\\s*(?=\\()",
+      "captures": { "1": { "name": "entity.name.function.call.barkscript" } }
+    },
+    "operators": {
+      "patterns": [
+        { "match": "==|!=|<=|>=|<|>", "name": "keyword.operator.comparison.barkscript" },
+        { "match": "\\+=|-=|\\*=|/=|=", "name": "keyword.operator.assignment.barkscript" },
+        { "match": "[+\\-*/%]", "name": "keyword.operator.arithmetic.barkscript" }
+      ]
+    }
+  }
+}

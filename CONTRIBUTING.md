@@ -1,0 +1,60 @@
+# Contributing to BarkScript
+
+Thanks for wanting to teach Walter new tricks. Bug reports, examples, error-message
+improvements and new language features are all welcome.
+
+## Setup
+
+```sh
+git clone https://github.com/mpge/barkscript.git
+cd barkscript
+npm install
+npm test          # vitest, about two seconds
+npm run build     # compiles src/ to dist/
+node dist/cli.js run examples/hello.bark
+npm run site:dev  # the website and playground on http://localhost:5173
+```
+
+Node.js 20 or newer.
+
+## How the compiler is put together
+
+A program goes through four stages. Each one is a single file in `src/`.
+
+| Stage | File | Job |
+|---|---|---|
+| Lex | `lexer.ts` | Characters to tokens. Joins two-word keywords (`come here`), splits `"Hi {name}"` into template parts, and rejects JavaScript habits such as `&&` and `;`. |
+| Parse | `parser.ts` | Tokens to the AST in `ast.ts`. Recursive descent, one method per grammar rule. Newlines end statements except inside brackets. |
+| Check | `checker.ts` | Scopes and names, `stay` reassignment, literal type checks, argument counts, and async inference: a fetch that waits or begs, or calls one that does, becomes async. |
+| Generate | `codegen.ts` | AST to JavaScript. Precedence-aware, so it only adds the parentheses it needs. Emits only the helpers the program uses. |
+
+`compiler.ts` chains them. `run.ts` runs hosted output inside Node with `vm` and maps stack
+traces back to `.bark` lines. `cli.ts` is the `bark` command. The website and playground in
+`website/` import the same `compiler.ts`, so the playground is never out of date.
+
+Every error is a `BarkError` with a message, a location and usually a hint. `errors.ts`
+formats them.
+
+## Adding a language feature
+
+1. Write it down in `docs/GRAMMAR.md` first. The grammar is the contract.
+2. Add tokens in `tokens.ts` if needed, then the AST node in `ast.ts`.
+3. Parse it in `parser.ts`, check it in `checker.ts`, generate it in `codegen.ts`.
+4. Add it to the TextMate grammar in `editors/vscode/syntaxes/barkscript.tmLanguage.json`
+   and to the playground highlighter (it reuses the lexer, so usually nothing to do).
+5. Document it in `docs/LANGUAGE.md` with a `bark` code block. The test suite compiles every
+   `bark` block in the docs and README, so examples can't rot.
+6. Test the parse, the generated JavaScript, the behaviour when run, and every new error.
+
+## Style
+
+- Keep the generated JavaScript something a person would write.
+- Error messages talk about Walter, say what went wrong in plain words, and end with a hint
+  that shows the fix. One joke per message at most. No emoji.
+- Prefer familiar dog commands over puns. If a new keyword needs explaining, it is the wrong
+  keyword.
+
+## Pull requests
+
+Run `npm test` and `npm run typecheck` before opening one. Keep each pull request to one
+change. If you are adding syntax, open an issue first so we can agree on the words.
