@@ -163,3 +163,5 @@ More in [docs/CLI.md](docs/CLI.md), including the JavaScript API.
 MIT
 
 <p align="center"><a href="https://barkscript.com">My dog made me build this.</a></p>
+
+<sub><p align="center">P.S. This was an inside joke about my dog working with me in the office, but if you wanna use it, go for it!</p></sub>
