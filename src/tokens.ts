@@ -63,6 +63,9 @@ export const CONTEXTUAL = ['while', 'forever', 'each', 'in', 'from', 'to', 'by',
 
 export const BUILTINS = ['random', 'number'] as const;
 
+/** Built-in values. A program may declare its own name over one, which hides it in that scope. */
+export const BUILTIN_VALUES = ['treats'] as const;
+
 export const KEYWORD_SET: ReadonlySet<string> = new Set(KEYWORDS);
 
 /** first word of a phrase -> the words that may follow it */

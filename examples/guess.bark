@@ -1,8 +1,8 @@
-# Walter buried a bone somewhere between 1 and 100. Find it.
+# Rover buried a bone somewhere between 1 and 100. Find it.
 stay bone = random(1, 100)
 sit tries = 0
 
-woof "Walter buried a bone between 1 and 100."
+woof "Rover buried a bone between 1 and 100."
 
 again forever
     sit guess = number(beg "Where do you dig? ")
@@ -12,15 +12,15 @@ again forever
         woof "Found it in {tries} tries. Good human."
         no
     otherwise if isNaN(guess)
-        woof "That's not a number. Walter tilts his head."
+        woof "That's not a number. Rover tilts his head."
     otherwise if guess < bone
-        woof "Higher. Walter sniffs further along."
+        woof "Higher. Rover sniffs further along."
     otherwise
-        woof "Lower. Walter paws back the other way."
+        woof "Lower. Rover paws back the other way."
     end
 
     if tries == 10
-        woof "Walter gave up and dug it up himself. It was at {bone}."
+        woof "Rover gave up and dug it up himself. It was at {bone}."
         play dead
     end
 end

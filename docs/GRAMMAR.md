@@ -9,7 +9,7 @@ the compiler has a bug.
 - Extension: `.bark`, encoding UTF-8.
 - One statement per line. Newlines end statements.
 - Blocks open with a keyword (`fetch`, `if`, `again`) and close with `end`.
-- Indentation is not significant. Use it anyway; Walter appreciates it.
+- Indentation is not significant. Use it anyway; Rover appreciates it.
 - `#` starts a comment that runs to the end of the line.
 - Inside `( )`, `[ ]` and `{ }`, newlines are ignored, so long lists and calls can wrap.
 - `end` may share a line with the statement before it, so a short unnamed fetch fits on one
@@ -51,7 +51,11 @@ Names that JavaScript reserves (`class`, `new`, `this`, ...) are allowed and get
 underscore in the output.
 
 Built-in functions: `random(min, max)` returns a whole number between `min` and `max`
-inclusive. `number(value)` converts text to a number. Both names are reserved. JavaScript
+inclusive. `number(value)` converts text to a number. Both names are reserved.
+
+Built-in value: `treats`, with exactly three methods, `bury(name, value)`, `grab(name)` and
+`eat(name)`, checked at compile time. A program may declare its own `treats`, which hides the
+built-in in that scope. JavaScript
 globals such as `Math`, `JSON`, `Date`, `String` and `Array` are available as-is.
 
 ## Lexical grammar

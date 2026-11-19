@@ -7,12 +7,13 @@
  *   </script>
  *
  * Every <script type="text/barkscript"> runs once the page has loaded, in document order.
- * `src="walter.bark"` loads the program from a file instead. `data-output="#selector"` also
+ * `src="rover.bark"` loads the program from a file instead. `data-output="#selector"` also
  * prints each woof into that element. Compile and runtime errors go to the console (and to
  * the output element when there is one).
  */
 import { compile } from './compiler.js';
 import { BarkError, DOG, formatError } from './errors.js';
+import { makeTreats, memoryShelf, type Shelf } from './treats.js';
 import { VERSION } from './version.js';
 
 export { compile, VERSION };
@@ -26,10 +27,22 @@ export interface BrowserRunOptions {
   output?: Element | null;
   /** Answers `beg`. Defaults to window.prompt. */
   ask?: (question: string) => string | Promise<string>;
+  /** Where `treats` are buried. Defaults to the page's localStorage. */
+  shelf?: Shelf;
 }
 
 class ExitSignal {
   constructor(readonly code: number) {}
+}
+
+/** localStorage when the page allows it, otherwise a shelf that lasts as long as the program. */
+function pageShelf(): Shelf {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) return window.localStorage;
+  } catch {
+    // Storage can be switched off, or blocked in a sandboxed frame.
+  }
+  return memoryShelf();
 }
 
 const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor as new (...args: string[]) => (...a: unknown[]) => Promise<void>;
@@ -83,6 +96,7 @@ export async function run(source: string, options: BrowserRunOptions = {}): Prom
       const answer = options.ask ? await options.ask(String(question)) : window.prompt(String(question));
       return answer ?? '';
     },
+    treats: makeTreats(options.shelf ?? pageShelf()),
   };
   const fakeProcess = {
     exit(code = 0): never {

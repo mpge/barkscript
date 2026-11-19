@@ -18,13 +18,14 @@ describe('website/site.bark', () => {
 
     const home = pages[0].html;
     expect(home).toContain('<h1 id="hero-title">Your code is barking.</h1>');
-    expect(home).toContain('Fourteen commands.');
-    expect(home.match(/<tr><td>/g)).toHaveLength(14);
+    expect(home).toContain('Fifteen commands.');
+    expect(home.match(/<tr><td>/g)).toHaveLength(15);
     expect(home).toContain('<td><code>woof "hi"</code></td>');
     expect(home).toContain('<code>if {} else {}</code>');
     expect(home).toContain('Then three steps.');
     // The BarkScript that runs on the page is written out verbatim, braces and all.
     expect(home).toContain('woof "This is visit number {visits}. He remembers."');
+    expect(home).toContain('come here treats.bury("rover-visits", visits)');
     expect(pages[1].html).toContain('<a href="docs.html" aria-current="page">Docs</a>');
   });
 });

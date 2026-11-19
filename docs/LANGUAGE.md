@@ -17,6 +17,7 @@ The formal rules live in [GRAMMAR.md](GRAMMAR.md).
 - [Functions: fetch](#functions-fetch)
 - [Lists and objects](#lists-and-objects)
 - [Waiting and input](#waiting-and-input)
+- [Saving things: treats](#saving-things-treats)
 - [Stopping the program](#stopping-the-program)
 - [Using JavaScript](#using-javascript)
 - [Errors](#errors)
@@ -36,7 +37,7 @@ woof
 
 ```bark
 # This line is for humans.
-woof "This one is for Walter." # so is this, sort of
+woof "This one is for Rover." # so is this, sort of
 ```
 
 ## Names: sit and stay
@@ -45,7 +46,7 @@ woof "This one is for Walter." # so is this, sort of
 
 ```bark
 sit treats = 3
-stay name = "Walter"
+stay name = "Rover"
 
 treats = treats - 1
 treats += 2
@@ -73,12 +74,12 @@ Names are block scoped, like `let` in JavaScript. A name declared inside an `if`
 | false | `bad dog` |
 | nothing | `empty bowl` |
 | lists | `[1, 2, 3]` |
-| objects | `{ name: "Walter", age: 3 }` |
+| objects | `{ name: "Rover", age: 3 }` |
 | functions | `fetch (x) drop it x * 2 end` |
 
 ```bark
-stay walter = { name: "Walter", age: 3, vaccinated: good boy, middleName: empty bowl }
-woof walter
+stay rover = { name: "Rover", age: 3, vaccinated: good boy, middleName: empty bowl }
+woof rover
 ```
 
 ## Text
@@ -86,7 +87,7 @@ woof walter
 Double-quoted text fills in anything inside `{ }`. Single-quoted text is taken literally.
 
 ```bark
-stay name = "Walter"
+stay name = "Rover"
 stay age = 3
 
 woof "{name} is {age * 7} in dog years."
@@ -192,7 +193,7 @@ fetch dogYears(age)
     drop it age * 7
 end
 
-come here greet("Walter")
+come here greet("Rover")
 woof dogYears(3)
 ```
 
@@ -255,7 +256,7 @@ brackets and braces, line breaks are fine.
 
 ```bark
 sit pack = [
-    { name: "Walter", age: 3 },
+    { name: "Rover", age: 3 },
     { name: "Biscuit", age: 7 },
 ]
 
@@ -292,6 +293,36 @@ call to it is awaited for you, including calls through other fetches. Unnamed fe
 wait become async too, but nothing awaits them for you when you pass them to JavaScript
 methods such as `map`.
 
+## Saving things: treats
+
+`treats` keeps values under a name. Dogs bury treats, grab them later, and eat them.
+
+| BarkScript | Does | JavaScript |
+|---|---|---|
+| `treats.bury(name, value)` | saves `value` under `name` | `localStorage.setItem` |
+| `treats.grab(name)` | gives it back, or `empty bowl` if nothing is buried there | `localStorage.getItem` |
+| `treats.eat(name)` | deletes it | `localStorage.removeItem` |
+
+```bark
+sit visits = (treats.grab("visits") or 0) + 1
+come here treats.bury("visits", visits)
+come here treats.bury("toys", ["ball", "rope"])
+
+stay toys = treats.grab("toys").join(" and ")
+woof "Visit {visits}. Rover has a {toys}."
+come here treats.eat("toys")
+```
+
+Values are saved as JSON, so numbers, lists and objects come back the way they went in, not
+as text. A value saved by other code that isn't JSON comes back as text.
+
+On a web page, treats are the page's `localStorage`, so they are still there next visit. The
+playground keeps them in this site's `localStorage` too. With `bark run` and in compiled
+JavaScript under Node.js, treats last until the program ends.
+
+`treats` is an ordinary name otherwise. `sit treats = 3` gives you your own `treats`, which
+hides the built-in one wherever your name is in scope.
+
 ## Stopping the program
 
 `play dead` ends the program right there.
@@ -309,13 +340,13 @@ BarkScript compiles to JavaScript and can use its globals directly: `Math`, `JSO
 `isNaN` and friends.
 
 ```bark
-woof Math.max(3, 9), JSON.stringify({ dog: "Walter" }), isNaN(number("bone"))
+woof Math.max(3, 9), JSON.stringify({ dog: "Rover" }), isNaN(number("bone"))
 ```
 
 `new` constructs JavaScript objects, as you would expect.
 
 ```bark
-stay seen = new Set(["Walter", "Biscuit", "Walter"])
+stay seen = new Set(["Rover", "Biscuit", "Rover"])
 stay today = new Date()
 woof seen.size, today.getFullYear() > 2000
 ```
@@ -329,7 +360,7 @@ Two functions are built in:
 
 ```bark
 stay roll = random(1, 6)
-woof "Walter rolled a {roll}."
+woof "Rover rolled a {roll}."
 ```
 
 ## Errors
@@ -344,7 +375,7 @@ dog.bark:12
   12 | fetch
      | ^^^^^
 
-You told Walter to FETCH,
+You told Rover to FETCH,
 but never told him what to fetch.
 
 hint: name the fetch, like `fetch giveTreat()`
@@ -369,7 +400,7 @@ oops.bark:2
   1 | sit dog = empty bowl
   2 | woof dog.name
 
-Walter tripped over something while running this.
+Rover tripped over something while running this.
 
 TypeError: Cannot read properties of null (reading 'name')
 ```
@@ -396,6 +427,7 @@ TypeError: Cannot read properties of null (reading 'name')
 | `wait 500` | `await sleep(500);` |
 | `beg "?"` | `await ask("?")` |
 | `play dead` | `process.exit(0);` |
+| `treats.bury("k", v)`, `treats.grab("k")`, `treats.eat("k")` | `localStorage.setItem`, `getItem`, `removeItem` |
 | `good boy` / `bad dog` / `empty bowl` | `true` / `false` / `null` |
 | `a and b`, `a or b`, `not a` | `a && b`, `a \|\| b`, `!a` |
 | `a == b`, `a != b` | `a === b`, `a !== b` |

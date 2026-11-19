@@ -43,7 +43,7 @@ end
 stay COMMANDS = [
     { bark: '`woof "hi"`', js: '`console.log("hi")`', why: "Dogs announce everything." },
     { bark: "`sit treats = 3`", js: "`let treats = 3`", why: "It sits there until you move it." },
-    { bark: '`stay name = "Walter"`', js: '`const name = "Walter"`', why: "It does not move. Ever." },
+    { bark: '`stay name = "Rover"`', js: '`const name = "Rover"`', why: "It does not move. Ever." },
     { bark: "`fetch giveTreat() ... end`", js: "`function giveTreat() \{}`", why: "Goes off, does a job, comes back." },
     { bark: "`come here giveTreat()`", js: "`giveTreat()`", why: "You call, it comes." },
     { bark: "`drop it treats`", js: "`return treats`", why: "Hands back what it was holding." },
@@ -54,6 +54,7 @@ stay COMMANDS = [
     { bark: "`wait 2 seconds`", js: "`await sleep(2000)`", why: "Makes the fetch async for you." },
     { bark: '`beg "Name? "`', js: '`await ask("Name? ")`', why: "Asks for input, very nicely." },
     { bark: "`play dead`", js: "`process.exit(0)`", why: "The program stops moving." },
+    { bark: '`treats.bury("bones", 3)`', js: '`localStorage.setItem("bones", 3)`', why: "Then `treats.grab` and `treats.eat`. Still there next visit." },
     { bark: "`good boy`, `bad dog`, `empty bowl`", js: "`true`, `false`, `null`", why: "`good girl` is also true." }
 ]
 
@@ -64,7 +65,7 @@ stay STEPS = [
 ]
 
 stay LINKS = [
-    { href: REPO, label: "Source on GitHub", note: "Star it so Walter feels seen." },
+    { href: REPO, label: "Source on GitHub", note: "Star it so Rover feels seen." },
     { href: "{REPO}/blob/main/CONTRIBUTING.md", label: "Contributing guide", note: "How the compiler fits together." },
     { href: "{REPO}/issues", label: "Issues", note: "Bugs, ideas, and new commands." },
     { href: "{REPO}/blob/main/docs/GRAMMAR.md", label: "The grammar", note: "The EBNF the compiler follows." }
@@ -73,15 +74,15 @@ stay LINKS = [
 # This runs on the home page, inside <script type="text/barkscript">.
 stay ON_THE_PAGE = [
     'stay hour = new Date().getHours()',
-    'sit visits = number(localStorage.getItem("walter-visits") or "0") + 1',
-    'come here localStorage.setItem("walter-visits", visits)',
+    'sit visits = (treats.grab("rover-visits") or 0) + 1',
+    'come here treats.bury("rover-visits", visits)',
     '',
     'if hour < 12',
-    '    woof "Good morning. Walter has been up since five."',
+    '    woof "Good morning. Rover has been up since five."',
     'otherwise if hour < 18',
-    '    woof "Good afternoon. Walter is asleep in a sunbeam."',
+    '    woof "Good afternoon. Rover is asleep in a sunbeam."',
     'otherwise',
-    '    woof "Good evening. Walter is guarding the couch."',
+    '    woof "Good evening. Rover is guarding the couch."',
     'end',
     '',
     'woof "This is visit number {visits}. He remembers."'
@@ -123,7 +124,7 @@ fetch header(page)
     drop it [
         '    <header class="site-header">',
         '      <a class="brand" href="./" aria-label="BarkScript home">',
-        '        <img src="walter.png" alt="" width="34" height="34" />',
+        '        <img src="rover.png" alt="" width="34" height="34" />',
         "        <span>BarkScript</span>",
         "      </a>",
         '      <nav aria-label="Main">',
@@ -162,7 +163,7 @@ end
 fetch hero()
     drop it [
         '      <section class="hero" aria-labelledby="hero-title">',
-        '        <img class="hero-dog" src="walter.png" alt="Walter, the BarkScript mascot: a golden retriever in an orange bandana, looking up" width="400" height="400" />',
+        '        <img class="hero-dog" src="rover.png" alt="Rover, the BarkScript mascot: a golden retriever in an orange bandana, looking up" width="400" height="400" />',
         '        <div class="hero-copy">',
         '          <h1 id="hero-title">Your code is barking.</h1>',
         "          <p class=\"hero-sub\">The world's least serious programming language.</p>",
@@ -232,7 +233,7 @@ end
 fetch errors()
     drop it [
         '      <section class="errors" aria-labelledby="errors-title">',
-        sectionHead("errors-title", "When something is wrong, Walter says so.", "The compiler checks the whole program before any of it runs, and every error has a line, a column, and usually the fix. These are produced live by the same compiler the playground uses."),
+        sectionHead("errors-title", "When something is wrong, Rover says so.", "The compiler checks the whole program before any of it runs, and every error has a line, a column, and usually the fix. These are produced live by the same compiler the playground uses."),
         '        <div class="error-list" data-errors></div>',
         "      </section>"
     ]
@@ -287,7 +288,7 @@ fetch contribute()
     end)
     drop it [
         '      <section class="contribute" aria-labelledby="contribute-title">',
-        sectionHead("contribute-title", "Teach Walter a new trick.", "BarkScript is MIT licensed and built in the open. The compiler is four small TypeScript files: lexer, parser, checker, code generator. Grammar changes start as an issue, so we can agree on the words first."),
+        sectionHead("contribute-title", "Teach Rover a new trick.", "BarkScript is MIT licensed and built in the open. The compiler is four small TypeScript files: lexer, parser, checker, code generator. Grammar changes start as an issue, so we can agree on the words first."),
         '        <ul class="links">',
         items,
         "        </ul>",

@@ -4,7 +4,7 @@ import { bark, output } from './helpers.js';
 
 describe('running programs', () => {
   it('prints values the way console.log does', async () => {
-    expect(await output('woof "a", 1, [1, 2], { dog: "Walter" }, good boy, empty bowl')).toBe("a 1 [ 1, 2 ] { dog: 'Walter' } true null\n");
+    expect(await output('woof "a", 1, [1, 2], { dog: "Rover" }, good boy, empty bowl')).toBe("a 1 [ 1, 2 ] { dog: 'Rover' } true null\n");
     expect(await output('woof')).toBe('\n');
   });
 
@@ -99,7 +99,7 @@ describe('running programs', () => {
       sit age = number(beg "Age? ")
       woof "{name} is {age * 7} in dog years"
     `;
-    expect(await output(source, ['Walter', '3'])).toBe('Name? Age? Walter is 21 in dog years\n');
+    expect(await output(source, ['Rover', '3'])).toBe('Name? Age? Rover is 21 in dog years\n');
   });
 
   it('play dead stops the program with exit code 0', async () => {

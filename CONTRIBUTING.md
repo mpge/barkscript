@@ -1,6 +1,6 @@
 # Contributing to BarkScript
 
-Thanks for wanting to teach Walter new tricks. Bug reports, examples, error-message
+Thanks for wanting to teach Rover new tricks. Bug reports, examples, error-message
 improvements and new language features are all welcome.
 
 ## Setup
@@ -50,7 +50,7 @@ formats them.
 ## Style
 
 - Keep the generated JavaScript something a person would write.
-- Error messages talk about Walter, say what went wrong in plain words, and end with a hint
+- Error messages talk about Rover, say what went wrong in plain words, and end with a hint
   that shows the fix. One joke per message at most. No emoji.
 - Prefer familiar dog commands over puns. If a new keyword needs explaining, it is the wrong
   keyword.

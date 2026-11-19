@@ -74,8 +74,17 @@
       "name": "constant.numeric.barkscript"
     },
     "builtins": {
-      "match": "\\b(random|number)\\b(?=\\s*\\()",
-      "name": "support.function.barkscript"
+      "patterns": [
+        { "match": "\\b(random|number)\\b(?=\\s*\\()", "name": "support.function.barkscript" },
+        {
+          "match": "\\b(treats)\\s*(\\.)\\s*(bury|grab|eat)\\b",
+          "captures": {
+            "1": { "name": "support.variable.barkscript" },
+            "2": { "name": "punctuation.accessor.barkscript" },
+            "3": { "name": "support.function.barkscript" }
+          }
+        }
+      ]
     },
     "calls": {
       "match": "\\b([\\p{L}_][\\p{L}\\p{N}_]*)\\s*(?=\\()",

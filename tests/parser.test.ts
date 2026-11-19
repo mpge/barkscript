@@ -46,7 +46,7 @@ describe('parser', () => {
   it('lets lists, objects and calls span lines', () => {
     const [statement] = parse(bark`
       sit dogs = [
-        { name: "Walter",
+        { name: "Rover",
           age: 3 },
         { name: "Biscuit", age: 7 },
       ]

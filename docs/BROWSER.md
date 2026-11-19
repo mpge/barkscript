@@ -22,7 +22,7 @@ line into an element:
 ```html
 <div id="woofs"></div>
 <script type="text/barkscript" data-output="#woofs">
-  woof "Walter says hi"
+  woof "Rover says hi"
 </script>
 ```
 
@@ -32,7 +32,7 @@ are also logged with `console.error`, with the same line, excerpt and hint the C
 ## Programs in their own file
 
 ```html
-<script type="text/barkscript" src="walter.bark"></script>
+<script type="text/barkscript" src="rover.bark"></script>
 ```
 
 The file is fetched, so it has to be on the same site or allow cross-origin requests.
@@ -44,12 +44,15 @@ available, and `new` constructs objects:
 
 ```bark
 stay heading = document.querySelector("h1")
-heading.textContent = "Walter was here"
+heading.textContent = "Rover was here"
 
-sit visits = number(localStorage.getItem("visits") or "0") + 1
-come here localStorage.setItem("visits", visits)
+sit visits = (treats.grab("visits") or 0) + 1
+come here treats.bury("visits", visits)
 woof "Visit {visits}, started {new Date().toLocaleTimeString()}"
 ```
+
+`treats` is the page's `localStorage` (see [Saving things](LANGUAGE.md#saving-things-treats)).
+If storage is switched off, treats last until the page is closed.
 
 `beg` uses `window.prompt`. `wait` works as usual. `play dead` stops that script, and the next
 one still runs.

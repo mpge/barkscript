@@ -1,5 +1,5 @@
 /** The dog who reads your code. Every error message is addressed to him. */
-export const DOG = 'Walter';
+export const DOG = 'Rover';
 
 export interface SourceLocation {
   line: number;

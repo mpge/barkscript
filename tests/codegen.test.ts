@@ -9,7 +9,7 @@ describe('code generation', () => {
   it('compiles the README example to readable JavaScript', () => {
     expect(
       js(bark`
-        sit dog = "Walter"
+        sit dog = "Rover"
         sit treats = 3
 
         woof "Who's a good boy?"
@@ -33,7 +33,7 @@ describe('code generation', () => {
       // Compiled from test.bark by BarkScript 0.1.0.
       "use strict";
 
-      let dog = "Walter";
+      let dog = "Rover";
       let treats = 3;
 
       console.log("Who's a good boy?");
@@ -69,7 +69,7 @@ describe('code generation', () => {
 
   it('turns interpolated strings into template literals', () => {
     // An escaped brace is literal text, so `${` must be escaped in the template literal.
-    expect(body('sit n = "Walter"\nwoof "Hi {n}! `$\\{n}`"')).toBe('let n = "Walter";\nconsole.log(`Hi ${n}! \\`\\${n}\\``);');
+    expect(body('sit n = "Rover"\nwoof "Hi {n}! `$\\{n}`"')).toBe('let n = "Rover";\nconsole.log(`Hi ${n}! \\`\\${n}\\``);');
     // A dollar sign before a real interpolation stays a dollar sign.
     expect(body('sit n = 1\nwoof "${n}"')).toBe('let n = 1;\nconsole.log(`$${n}`);');
   });

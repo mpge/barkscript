@@ -19,8 +19,9 @@ if (!hasSharedCode) void playground.demo();
 const ERROR_SAMPLES: Array<[file: string, source: string]> = [
   ['dog.bark', 'sit treats = 3\nfetch\n'],
   ['dog.bark', 'sit treats = 3\nsit double = good boy * 2\n'],
-  ['walter.bark', 'stay name = "Walter"\nname = "Rex"\n'],
+  ['rover.bark', 'stay name = "Rover"\nname = "Rex"\n'],
   ['treats.bark', 'sit treats = 3\nwoof treat + 1\n'],
+  ['stash.bark', 'come here treats.setItem("bones", 3)\n'],
   ['habits.bark', 'fetch double(x)\n    return x * 2\nend\n'],
 ];
 

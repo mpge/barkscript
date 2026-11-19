@@ -24,7 +24,7 @@ type checker and compiler, and it turns `.bark` files into plain, readable JavaS
 What if a dog invented JavaScript? Roughly this:
 
 ```bark
-sit dog = "Walter"
+sit dog = "Rover"
 sit treats = 3
 
 woof "Who's a good boy?"
@@ -48,7 +48,7 @@ play dead
 `bark compile` turns that into:
 
 ```js
-let dog = "Walter";
+let dog = "Rover";
 let treats = 3;
 
 console.log("Who's a good boy?");
@@ -91,6 +91,7 @@ Or without installing: `npx barkscript run hello.bark`. Needs Node.js 20 or newe
 | `if` / `otherwise` | if / else | | `end` | end a block |
 | `good boy` | true | | `bad dog` | false |
 | `empty bowl` | null | | `and` `or` `not` | logic |
+| `treats.bury` | save | | `treats.grab` / `treats.eat` | load / delete |
 
 Strings interpolate (`"Hi {name}"`), lists and objects are JavaScript's, and JavaScript
 globals like `Math` and `JSON` just work. The [language guide](docs/LANGUAGE.md) covers all of
@@ -107,7 +108,7 @@ dog.bark:12
   12 | fetch
      | ^^^^^
 
-You told Walter to FETCH,
+You told Rover to FETCH,
 but never told him what to fetch.
 
 hint: name the fetch, like `fetch giveTreat()`

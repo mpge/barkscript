@@ -53,6 +53,7 @@ export function highlightBark(source: string): string {
             continue;
           case 'identifier':
             if (CONTEXT.has(token.value) && afterAgain) cls = 'keyword';
+            else if (token.value === 'treats' && next?.value === '.') cls = 'builtin';
             else if (next?.value === '(' && next.type === 'operator') cls = (BUILTINS as readonly string[]).includes(token.value) ? 'builtin' : 'call';
             break;
           case 'operator':

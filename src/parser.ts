@@ -712,7 +712,7 @@ class Parser {
       let key: string;
       if (keyToken.type === 'identifier' || keyToken.type === 'string' || keyToken.type === 'number') key = keyToken.value;
       else if (keyToken.type === 'keyword' && !keyToken.value.includes(' ')) key = keyToken.value;
-      else throw new BarkError(`${DOG} expected a key here, but found ${describe(keyToken)}.`, loc(keyToken), 'objects look like `{ name: "Walter", age: 3 }`');
+      else throw new BarkError(`${DOG} expected a key here, but found ${describe(keyToken)}.`, loc(keyToken), 'objects look like `{ name: "Rover", age: 3 }`');
       this.expect(':', (got) => `${DOG} expected \`:\` after the key \`${key}\`, but found ${describe(got)}.`, `try \`${key}: value\``);
       const value = this.expression();
       entries.push({ key, loc: loc(keyToken), value });

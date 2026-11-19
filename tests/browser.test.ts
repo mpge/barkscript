@@ -18,7 +18,7 @@ describe('browser runtime', () => {
     const error = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(await run('fetch', { filename: 'page.bark' })).toBe(1);
     expect(error.mock.calls[0][0]).toContain('page.bark:1');
-    expect(error.mock.calls[0][0]).toContain('You told Walter to FETCH');
+    expect(error.mock.calls[0][0]).toContain('You told Rover to FETCH');
   });
 
   it('reports runtime errors without throwing', async () => {

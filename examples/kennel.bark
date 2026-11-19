@@ -1,6 +1,6 @@
 # Lists, objects, unnamed fetches and a little bit of JavaScript.
 stay kennel = [
-    { name: "Walter", age: 3, goodBoy: good boy },
+    { name: "Rover", age: 3, goodBoy: good boy },
     { name: "Biscuit", age: 7, goodBoy: good boy },
     { name: "Pickles", age: 1, goodBoy: bad dog },
 ]

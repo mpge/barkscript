@@ -1,6 +1,7 @@
 import type * as AST from './ast.js';
 import { BarkError, closest, DOG, type SourceLocation } from './errors.js';
-import { BUILTINS } from './tokens.js';
+import { BUILTIN_VALUES, BUILTINS } from './tokens.js';
+import { TREAT_ARGS, TREAT_TRICKS, type TreatTrick } from './treats.js';
 
 /** JavaScript globals a BarkScript program may use directly. */
 export const JS_GLOBALS = new Set([
@@ -173,7 +174,7 @@ class Checker {
       }
       return symbol;
     }
-    if ((BUILTINS as readonly string[]).includes(id.name)) {
+    if ((BUILTINS as readonly string[]).includes(id.name) || (BUILTIN_VALUES as readonly string[]).includes(id.name)) {
       this.builtins.add(id.name);
       return undefined;
     }
@@ -293,7 +294,7 @@ class Checker {
     const id = s.target;
     const symbol = scope.lookup(id.name);
     if (!symbol) {
-      if (JS_GLOBALS.has(id.name) || (BUILTINS as readonly string[]).includes(id.name)) {
+      if (JS_GLOBALS.has(id.name) || (BUILTINS as readonly string[]).includes(id.name) || (BUILTIN_VALUES as readonly string[]).includes(id.name)) {
         throw new BarkError(`\`${id.name}\` is built in, so ${DOG} won't change it.`, id.loc, `make your own with \`sit my${id.name[0].toUpperCase()}${id.name.slice(1)} = ...\``);
       }
       const suggestion = closest(id.name, scope.names());
@@ -387,6 +388,7 @@ class Checker {
         return;
       case 'Member':
         this.expression(e.object, scope);
+        this.treatTrick(e, scope);
         return;
       case 'Index':
         this.expression(e.object, scope);
@@ -417,9 +419,37 @@ class Checker {
     }
   }
 
+  /** `treats.something`, where `treats` is the built-in stash: is it one of the three tricks? */
+  private treatTrick(e: AST.MemberExpression, scope: Scope): TreatTrick | undefined {
+    if (e.object.kind !== 'Identifier' || e.object.name !== 'treats' || scope.lookup('treats')) return undefined;
+    if (Object.hasOwn(TREAT_TRICKS, e.property)) return e.property as TreatTrick;
+    const habit = (Object.keys(TREAT_TRICKS) as TreatTrick[]).find((trick) => TREAT_TRICKS[trick] === e.property);
+    const suggestion = habit ?? closest(e.property, Object.keys(TREAT_TRICKS));
+    throw new BarkError(
+      `\`treats\` only knows three tricks: \`bury\`, \`grab\` and \`eat\`.\n${DOG} has never heard of \`treats.${e.property}\`.`,
+      e.loc,
+      habit
+        ? `in BarkScript, \`${e.property}\` is \`${habit}\`: \`${TREAT_ARGS[habit].example}\``
+        : suggestion
+          ? `did you mean \`treats.${suggestion}\`?`
+          : 'use `treats.bury(name, value)`, `treats.grab(name)` or `treats.eat(name)`',
+    );
+  }
+
   private call(e: AST.CallExpression, scope: Scope): void {
     this.expression(e.callee, scope);
     e.args.forEach((arg) => this.expression(arg, scope));
+    if (e.callee.kind === 'Member') {
+      const trick = this.treatTrick(e.callee, scope);
+      if (trick && e.args.length !== TREAT_ARGS[trick].count) {
+        throw new BarkError(
+          `\`treats.${trick}\` needs ${TREAT_ARGS[trick].needs}, but got ${e.args.length === 0 ? 'nothing' : e.args.length}.`,
+          e.loc,
+          `like \`${TREAT_ARGS[trick].example}\``,
+        );
+      }
+      return;
+    }
     if (e.callee.kind !== 'Identifier') return;
     const symbol = scope.lookup(e.callee.name);
     if (!symbol) return;

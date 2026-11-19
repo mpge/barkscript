@@ -2,6 +2,7 @@ import { format } from 'node:util';
 import vm from 'node:vm';
 import { compile } from './compiler.js';
 import { BarkRuntimeError } from './errors.js';
+import { makeTreats, type Shelf } from './treats.js';
 
 /** Thrown by `play dead` inside a hosted program; carries the exit code out of the program. */
 export class ExitSignal {
@@ -18,6 +19,8 @@ export interface RunIO {
 export interface RunOptions {
   filename?: string;
   io?: RunIO;
+  /** Where `treats` are buried. Defaults to a stash that lasts until the program ends. */
+  shelf?: Shelf;
 }
 
 export interface RunResult {
@@ -58,7 +61,7 @@ export async function run(source: string, options: RunOptions = {}): Promise<Run
   };
 
   try {
-    await fn({ ask: (question = '') => ask(String(question)) }, fakeConsole, fakeProcess);
+    await fn({ ask: (question = '') => ask(String(question)), treats: makeTreats(options.shelf) }, fakeConsole, fakeProcess);
     return { exitCode: 0 };
   } catch (error) {
     if (error instanceof ExitSignal) return { exitCode: error.code };

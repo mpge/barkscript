@@ -170,6 +170,46 @@ class Generator {
         '}',
       ]);
     }
+    if (this.facts.builtins.has('treats')) {
+      if (script) {
+        // The same behaviour as src/treats.ts, written out so the file runs on its own.
+        block([
+          'const treats = (() => {',
+          '  let shelf;',
+          '  try {',
+          '    if (typeof window !== "undefined" && window.localStorage) shelf = window.localStorage;',
+          '  } catch {}',
+          '  if (!shelf) {',
+          '    const items = new Map();',
+          '    shelf = {',
+          '      getItem: (name) => items.get(name) ?? null,',
+          '      setItem: (name, value) => items.set(name, value),',
+          '      removeItem: (name) => items.delete(name),',
+          '    };',
+          '  }',
+          '  return {',
+          '    bury(name, value) {',
+          '      shelf.setItem(String(name), JSON.stringify(value) ?? "null");',
+          '    },',
+          '    grab(name) {',
+          '      const raw = shelf.getItem(String(name));',
+          '      if (raw === null) return null;',
+          '      try {',
+          '        return JSON.parse(raw);',
+          '      } catch {',
+          '        return raw;',
+          '      }',
+          '    },',
+          '    eat(name) {',
+          '      shelf.removeItem(String(name));',
+          '    },',
+          '  };',
+          '})();',
+        ]);
+      } else {
+        block(['const treats = __host.treats;']);
+      }
+    }
     if (this.facts.usesBeg) {
       if (script) {
         block([

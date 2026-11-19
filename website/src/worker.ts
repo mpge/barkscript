@@ -1,10 +1,12 @@
 /// <reference lib="webworker" />
+import { makeTreats, memoryShelf, type Shelf } from '../../src/treats.js';
 import { inspect } from './inspect.js';
 
-export type ToWorker = { type: 'run'; code: string } | { type: 'answer'; value: string };
+export type ToWorker = { type: 'run'; code: string; treats: Record<string, string> } | { type: 'answer'; value: string };
 export type FromWorker =
   | { type: 'out'; text: string }
   | { type: 'ask'; question: string }
+  | { type: 'treats'; name: string; value: string | null }
   | { type: 'done'; exitCode: number; playedDead: boolean }
   | { type: 'error'; message: string; jsLine?: number };
 
@@ -24,11 +26,11 @@ self.onmessage = (event: MessageEvent<ToWorker>) => {
     answer?.(message.value);
     answer = undefined;
   } else if (message.type === 'run') {
-    void execute(message.code);
+    void execute(message.code, message.treats);
   }
 };
 
-async function execute(code: string): Promise<void> {
+async function execute(code: string, stash: Record<string, string>): Promise<void> {
   const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor as new (...args: string[]) => (...a: unknown[]) => Promise<void>;
   const log = (...args: unknown[]) => post({ type: 'out', text: args.map((a) => inspect(a)).join(' ') });
   const host = {
@@ -36,6 +38,7 @@ async function execute(code: string): Promise<void> {
       post({ type: 'ask', question: String(question) });
       return new Promise<string>((resolve) => (answer = resolve));
     },
+    treats: makeTreats(mirroredShelf(stash)),
   };
   const fakeProcess = {
     exit(code = 0): never {
@@ -71,4 +74,20 @@ function jsLine(stack?: string): number | undefined {
   if (!match) return undefined;
   // AsyncFunction adds two header lines; PREFIX adds two more.
   return Number(match[1]) - 4;
+}
+
+/** A copy of the page's localStorage that sends every change back to the page. */
+function mirroredShelf(stash: Record<string, string>): Shelf {
+  const shelf = memoryShelf(stash);
+  return {
+    getItem: (name) => shelf.getItem(name),
+    setItem(name, value) {
+      shelf.setItem(name, value);
+      post({ type: 'treats', name, value });
+    },
+    removeItem(name) {
+      shelf.removeItem(name);
+      post({ type: 'treats', name, value: null });
+    },
+  };
 }

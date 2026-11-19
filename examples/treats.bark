@@ -1,5 +1,5 @@
-# The example from the README: Walter and a limited supply of treats.
-sit dog = "Walter"
+# The example from the README: Rover and a limited supply of treats.
+sit dog = "Rover"
 sit treats = 3
 
 woof "Who's a good boy?"

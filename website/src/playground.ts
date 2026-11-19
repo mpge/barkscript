@@ -161,6 +161,14 @@ export class Playground {
             this.arm();
           });
           break;
+        case 'treats':
+          try {
+            if (message.value === null) localStorage.removeItem(message.name);
+            else localStorage.setItem(message.name, message.value);
+          } catch {
+            // Storage is off: treats last until the program ends.
+          }
+          break;
         case 'done':
           this.finish(message.playedDead ? `${DOG} played dead. Exit code ${message.exitCode}.` : 'Done.');
           break;
@@ -179,7 +187,7 @@ export class Playground {
       this.print(event.message || 'The program could not start.', 'is-error');
       this.finish('Stopped with an error.');
     };
-    worker.postMessage({ type: 'run', code });
+    worker.postMessage({ type: 'run', code, treats: stash() });
     this.arm();
   }
 
@@ -251,4 +259,18 @@ export class Playground {
     }
     setTimeout(() => (button.textContent = 'Share'), 1800);
   }
+}
+
+/** Everything in this page's localStorage, so the worker can grab treats buried in earlier runs. */
+function stash(): Record<string, string> {
+  const items: Record<string, string> = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const name = localStorage.key(i)!;
+      items[name] = localStorage.getItem(name)!;
+    }
+  } catch {
+    // Storage is off.
+  }
+  return items;
 }

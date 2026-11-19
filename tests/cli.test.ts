@@ -68,7 +68,7 @@ describe('cli', () => {
     const { io, result, cwd } = harness({ 'dog.bark': 'sit treats = 3\nfetch\n' });
     expect(await main(['compile', 'dog.bark'], io)).toBe(1);
     expect(result.stderr).toContain('dog.bark:2');
-    expect(result.stderr).toContain('You told Walter to FETCH,');
+    expect(result.stderr).toContain('You told Rover to FETCH,');
     expect(existsSync(join(cwd, 'dog.js'))).toBe(false);
   });
 
@@ -76,7 +76,7 @@ describe('cli', () => {
     const { io, result } = harness({ 'oops.bark': 'sit dog = empty bowl\nwoof dog.name\n' });
     expect(await main(['run', 'oops.bark'], io)).toBe(1);
     expect(result.stderr).toContain('oops.bark:2');
-    expect(result.stderr).toContain('Walter tripped');
+    expect(result.stderr).toContain('Rover tripped');
   });
 
   it('checks without running', async () => {

@@ -18,7 +18,7 @@ describe('examples', () => {
 
   it('treats', async () => {
     expect(await output(read('treats.bark'))).toBe(
-      "Who's a good boy?\nHere you go\nHere you go\nHere you go\nWalter has 0 treats left.\nNo more treats\n",
+      "Who's a good boy?\nHere you go\nHere you go\nHere you go\nRover has 0 treats left.\nNo more treats\n",
     );
   });
 
@@ -41,10 +41,10 @@ describe('examples', () => {
     const text = await output(read('guess.bark'), ['50', 'bone?', '10', '42']);
     expect(text).toBe(
       [
-        'Walter buried a bone between 1 and 100.',
-        'Where do you dig? Lower. Walter paws back the other way.',
-        "Where do you dig? That's not a number. Walter tilts his head.",
-        'Where do you dig? Higher. Walter sniffs further along.',
+        'Rover buried a bone between 1 and 100.',
+        'Where do you dig? Lower. Rover paws back the other way.',
+        "Where do you dig? That's not a number. Rover tilts his head.",
+        'Where do you dig? Higher. Rover sniffs further along.',
         'Where do you dig? Found it in 4 tries. Good human.',
         '',
       ].join('\n'),
@@ -57,7 +57,7 @@ describe('examples', () => {
 
   it('kennel', async () => {
     expect(await output(read('kennel.bark'))).toBe(
-      'In the kennel: Walter, Biscuit, Pickles\nAverage age: 4\nOldest: Biscuit\nPickles is on thin ice.\nBones today: 3\n',
+      'In the kennel: Rover, Biscuit, Pickles\nAverage age: 4\nOldest: Biscuit\nPickles is on thin ice.\nBones today: 3\n',
     );
   });
 
