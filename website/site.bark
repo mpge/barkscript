@@ -1,0 +1,375 @@
+# barkscript.com, written in BarkScript.
+#
+# This program builds every page of the website. It woofs one JSON list of
+# { file, html } pages, and the website build (website/vite.config.ts) writes
+# each one to disk before Vite bundles them. Try it yourself:
+#
+#     bark run website/site.bark
+
+stay REPO = "https://github.com/mpge/barkscript"
+stay SOURCE = "{REPO}/blob/main/website/site.bark"
+stay FONTS = "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,700;0,800;1,800;1,900&family=JetBrains+Mono:wght@400;600&display=swap"
+
+# ------------------------------------------------------------------ helpers
+
+fetch escape(text)
+    drop it text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+end
+
+# Text with `backticks` becomes text with <code>.
+fetch inline(text)
+    sit html = ""
+    sit inCode = bad dog
+    again each part in text.split("`")
+        if inCode
+            html += "<code>{escape(part)}</code>"
+        otherwise
+            html += escape(part)
+        end
+        inCode = not inCode
+    end
+    drop it html
+end
+
+stay NUMBERS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+    "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"]
+
+fetch spell(n)
+    drop it NUMBERS[n] or String(n)
+end
+
+# ---------------------------------------------------------------- the words
+
+stay COMMANDS = [
+    { bark: '`woof "hi"`', js: '`console.log("hi")`', why: "Dogs announce everything." },
+    { bark: "`sit treats = 3`", js: "`let treats = 3`", why: "It sits there until you move it." },
+    { bark: '`stay name = "Walter"`', js: '`const name = "Walter"`', why: "It does not move. Ever." },
+    { bark: "`fetch giveTreat() ... end`", js: "`function giveTreat() \{}`", why: "Goes off, does a job, comes back." },
+    { bark: "`come here giveTreat()`", js: "`giveTreat()`", why: "You call, it comes." },
+    { bark: "`drop it treats`", js: "`return treats`", why: "Hands back what it was holding." },
+    { bark: "`if ... otherwise ... end`", js: "`if \{} else \{}`", why: "Dogs do not do conditionals, so these stay human." },
+    { bark: "`again 3 ... end`", js: "`for (...) \{}`", why: "Also `again while`, `again each`, `again i from 1 to 10`, `again forever`." },
+    { bark: "`no`", js: "`break`", why: "Stops whatever is happening." },
+    { bark: "`leave it`", js: "`continue`", why: "Skip this one, move on." },
+    { bark: "`wait 2 seconds`", js: "`await sleep(2000)`", why: "Makes the fetch async for you." },
+    { bark: '`beg "Name? "`', js: '`await ask("Name? ")`', why: "Asks for input, very nicely." },
+    { bark: "`play dead`", js: "`process.exit(0)`", why: "The program stops moving." },
+    { bark: "`good boy`, `bad dog`, `empty bowl`", js: "`true`, `false`, `null`", why: "`good girl` is also true." }
+]
+
+stay STEPS = [
+    { title: "Install the bark command", lang: "shell", lines: ["npm install -g barkscript"] },
+    { title: "Write `hello.bark`", lang: "bark", lines: ['woof "Hello, world!"'] },
+    { title: "Run it, or compile it to JavaScript", lang: "shell", lines: ["bark run hello.bark", "bark compile hello.bark   # writes hello.js"] }
+]
+
+stay LINKS = [
+    { href: REPO, label: "Source on GitHub", note: "Star it so Walter feels seen." },
+    { href: "{REPO}/blob/main/CONTRIBUTING.md", label: "Contributing guide", note: "How the compiler fits together." },
+    { href: "{REPO}/issues", label: "Issues", note: "Bugs, ideas, and new commands." },
+    { href: "{REPO}/blob/main/docs/GRAMMAR.md", label: "The grammar", note: "The EBNF the compiler follows." }
+]
+
+# This runs on the home page, inside <script type="text/barkscript">.
+stay ON_THE_PAGE = [
+    'stay hour = new Date().getHours()',
+    'sit visits = number(localStorage.getItem("walter-visits") or "0") + 1',
+    'come here localStorage.setItem("walter-visits", visits)',
+    '',
+    'if hour < 12',
+    '    woof "Good morning. Walter has been up since five."',
+    'otherwise if hour < 18',
+    '    woof "Good afternoon. Walter is asleep in a sunbeam."',
+    'otherwise',
+    '    woof "Good evening. Walter is guarding the couch."',
+    'end',
+    '',
+    'woof "This is visit number {visits}. He remembers."'
+]
+
+# ------------------------------------------------------------ shared pieces
+
+fetch head(title, description, extra)
+    drop it [
+        "<!doctype html>",
+        '<html lang="en">',
+        "  <head>",
+        '    <meta charset="utf-8" />',
+        '    <meta name="viewport" content="width=device-width, initial-scale=1" />',
+        "    <title>{escape(title)}</title>",
+        "    <meta name=\"description\" content=\"{escape(description)}\" />",
+        extra,
+        '    <meta name="theme-color" content="#FCF7F5" />',
+        '    <link rel="icon" type="image/png" href="favicon.png" />',
+        '    <link rel="apple-touch-icon" href="apple-touch-icon.png" />',
+        '    <link rel="preconnect" href="https://fonts.googleapis.com" />',
+        '    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />',
+        "    <link href=\"{escape(FONTS)}\" rel=\"stylesheet\" />",
+        '    <link rel="stylesheet" href="./src/styles.css" />',
+        "  </head>"
+    ]
+end
+
+fetch header(page)
+    # The home page links to its own sections; other pages link back to them.
+    sit home = "./"
+    if page == "index"
+        home = ""
+    end
+    sit docsCurrent = ""
+    if page == "docs"
+        docsCurrent = ' aria-current="page"'
+    end
+    drop it [
+        '    <header class="site-header">',
+        '      <a class="brand" href="./" aria-label="BarkScript home">',
+        '        <img src="walter.png" alt="" width="34" height="34" />',
+        "        <span>BarkScript</span>",
+        "      </a>",
+        '      <nav aria-label="Main">',
+        "        <a href=\"{home}#playground\">Playground</a>",
+        "        <a href=\"docs.html\"{docsCurrent}>Docs</a>",
+        "        <a href=\"{home}#web\">On a web page</a>",
+        "        <a href=\"{home}#install\">Install</a>",
+        "        <a href=\"{REPO}\">GitHub</a>",
+        "      </nav>",
+        "    </header>"
+    ]
+end
+
+fetch footer(extra)
+    drop it [
+        '    <footer class="site-footer">',
+        "      <p><strong>BarkScript</strong>. All bark. No byte.</p>",
+        '      <p>MIT licensed. Made by Matthew Gros, supervised by <span class="troop" tabindex="0">Troop<img src="troop.jpg" alt="Troop, the dog who supervised this project" width="180" height="180" loading="lazy" hidden /></span>.</p>',
+        extra,
+        "      <p>This page was generated by <a href=\"{SOURCE}\">a BarkScript program</a>.</p>",
+        "    </footer>"
+    ]
+end
+
+fetch sectionHead(id, title, paragraph)
+    drop it [
+        '        <div class="section-head">',
+        "          <h2 id=\"{id}\">{title}</h2>",
+        "          <p>{paragraph}</p>",
+        "        </div>"
+    ]
+end
+
+# --------------------------------------------------------------- home page
+
+fetch hero()
+    drop it [
+        '      <section class="hero" aria-labelledby="hero-title">',
+        '        <img class="hero-dog" src="walter.png" alt="Walter, the BarkScript mascot: a golden retriever in an orange bandana, looking up" width="400" height="400" />',
+        '        <div class="hero-copy">',
+        '          <h1 id="hero-title">Your code is barking.</h1>',
+        "          <p class=\"hero-sub\">The world's least serious programming language.</p>",
+        '          <p class="hero-lede">',
+        "            BarkScript is a real language written in dog commands. A lexer, a parser, a type checker and a compiler",
+        "            turn it into plain JavaScript you could ship. Whether you should is between you and your dog.",
+        "          </p>",
+        '          <div class="install-line">',
+        "            <code>npm install -g barkscript</code>",
+        '            <button type="button" class="copy" data-copy="npm install -g barkscript">Copy</button>',
+        "          </div>",
+        "        </div>",
+        "      </section>"
+    ]
+end
+
+fetch playground()
+    drop it [
+        '      <section id="playground" class="playground" aria-label="Playground" data-playground>',
+        '        <div class="pg-bar">',
+        '          <div class="pg-examples" role="tablist" aria-label="Examples" data-examples></div>',
+        '          <div class="pg-actions">',
+        '            <button type="button" class="btn-quiet" data-share>Share</button>',
+        '            <button type="button" class="btn-run" data-run>Run</button>',
+        "          </div>",
+        "        </div>",
+        '        <div class="pg-panes">',
+        '          <div class="pg-pane">',
+        '            <div class="pg-label">main.bark</div>',
+        '            <div class="pg-editor" data-editor></div>',
+        "          </div>",
+        '          <div class="pg-pane pg-pane-js">',
+        '            <div class="pg-label" data-js-label>JavaScript</div>',
+        '            <pre class="pg-js" data-js aria-live="polite"></pre>',
+        "          </div>",
+        "        </div>",
+        '        <div class="pg-console-wrap">',
+        '          <div class="pg-label">',
+        '            Console <span class="pg-status" data-status role="status"></span>',
+        "          </div>",
+        '          <div class="pg-console" data-console aria-live="polite"></div>',
+        "        </div>",
+        "      </section>"
+    ]
+end
+
+fetch words()
+    stay rows = COMMANDS.map(fetch (row)
+        drop it "            <tr><td>{inline(row.bark)}</td><td>{inline(row.js)}</td><td>{inline(row.why)}</td></tr>"
+    end)
+    stay title = "{spell(COMMANDS.length)} commands. You already know most of them."
+    drop it [
+        '      <section class="words" aria-labelledby="words-title">',
+        sectionHead("words-title", title, "Familiar dog commands, used for what they sound like. Strings, numbers, lists, objects and operators work the way they do in JavaScript, because underneath, that is what they are."),
+        '        <table class="dictionary">',
+        "          <thead>",
+        '            <tr><th scope="col">BarkScript</th><th scope="col">JavaScript</th><th scope="col">Why</th></tr>',
+        "          </thead>",
+        "          <tbody>",
+        rows,
+        "          </tbody>",
+        "        </table>",
+        "      </section>"
+    ]
+end
+
+fetch errors()
+    drop it [
+        '      <section class="errors" aria-labelledby="errors-title">',
+        sectionHead("errors-title", "When something is wrong, Walter says so.", "The compiler checks the whole program before any of it runs, and every error has a line, a column, and usually the fix. These are produced live by the same compiler the playground uses."),
+        '        <div class="error-list" data-errors></div>',
+        "      </section>"
+    ]
+end
+
+fetch web()
+    stay intro = "One script tag, then write BarkScript inside " + inline('`<script type="text/barkscript">`') + ". It compiles in the browser when the page loads. " + inline("`data-output` also prints each `woof` into an element.")
+    drop it [
+        '      <section id="web" class="web" aria-labelledby="web-title">',
+        sectionHead("web-title", "Put it straight in your HTML.", intro),
+        '        <div class="web-grid">',
+        '          <pre class="code-block" data-highlight="html"></pre>',
+        '          <div class="web-demo">',
+        '            <div class="pg-label">This page, running that</div>',
+        '            <div class="web-output" id="woofs"></div>',
+        "          </div>",
+        '          <script type="text/barkscript" data-output="#woofs">',
+        ON_THE_PAGE,
+        "          </script>",
+        "        </div>",
+        "      </section>"
+    ]
+end
+
+fetch install()
+    sit items = []
+    again each step in STEPS
+        sit code = escape(step.lines.join("\n"))
+        sit block = "<pre class=\"code-block\"><code>{code}</code></pre>"
+        if step.lang == "bark"
+            block = "<pre class=\"code-block\" data-highlight=\"bark\">{code}</pre>"
+        end
+        come here items.push("          <li>", "            <h3>{inline(step.title)}</h3>", "            {block}", "          </li>")
+    end
+    drop it [
+        '      <section id="install" class="install" aria-labelledby="install-title">',
+        sectionHead("install-title", "Install", "Node.js 20 or newer. Then {spell(STEPS.length).toLowerCase()} steps."),
+        '        <ol class="steps">',
+        items,
+        "        </ol>",
+        '        <p class="aside">',
+        "          Editor support: a TextMate grammar and VS Code extension live in",
+        "          <a href=\"{REPO}/tree/main/editors/vscode\">editors/vscode</a>.",
+        "        </p>",
+        "      </section>"
+    ]
+end
+
+fetch contribute()
+    stay items = LINKS.map(fetch (link)
+        drop it "          <li><a href=\"{link.href}\">{link.label}</a><span>{link.note}</span></li>"
+    end)
+    drop it [
+        '      <section class="contribute" aria-labelledby="contribute-title">',
+        sectionHead("contribute-title", "Teach Walter a new trick.", "BarkScript is MIT licensed and built in the open. The compiler is four small TypeScript files: lexer, parser, checker, code generator. Grammar changes start as an issue, so we can agree on the words first."),
+        '        <ul class="links">',
+        items,
+        "        </ul>",
+        "      </section>"
+    ]
+end
+
+fetch homePage()
+    stay social = [
+        '    <meta property="og:title" content="BarkScript. Your code is barking." />',
+        '    <meta property="og:description" content="A real programming language written in dog commands. Compiles to readable JavaScript." />',
+        '    <meta property="og:image" content="https://barkscript.com/og.png" />',
+        '    <meta name="twitter:card" content="summary_large_image" />'
+    ]
+    drop it [
+        head("BarkScript: the world's least serious programming language", "BarkScript is a real programming language written in dog commands. It compiles to readable JavaScript. Try it in your browser.", social),
+        "  <body>",
+        '    <a class="skip" href="#playground">Skip to the playground</a>',
+        "",
+        header("index"),
+        "",
+        "    <main>",
+        hero(),
+        "",
+        playground(),
+        "",
+        words(),
+        "",
+        errors(),
+        "",
+        web(),
+        "",
+        install(),
+        "",
+        contribute(),
+        "    </main>",
+        "",
+        footer([]),
+        "",
+        '    <script type="module" src="./src/main.ts"></script>',
+        "  </body>",
+        "</html>"
+    ]
+end
+
+# --------------------------------------------------------------- docs page
+
+fetch docsPage()
+    stay docsNote = [
+        "      <p>",
+        "        These pages are the markdown files in",
+        "        <a href=\"{REPO}/tree/main/docs\">docs/</a>. Spotted a mistake? Edit them on GitHub.",
+        "      </p>"
+    ]
+    drop it [
+        head("BarkScript documentation", "The BarkScript language guide, grammar, CLI and browser documentation.", []),
+        '  <body class="docs-page">',
+        '    <a class="skip" href="#doc">Skip to the documentation</a>',
+        "",
+        header("docs"),
+        "",
+        '    <div class="docs-layout">',
+        '      <aside class="docs-nav" aria-label="Documentation">',
+        "        <ul data-doc-tabs></ul>",
+        '        <div class="docs-toc" data-toc></div>',
+        "      </aside>",
+        '      <article id="doc" class="doc" data-doc></article>',
+        "    </div>",
+        "",
+        footer(docsNote),
+        "",
+        '    <script type="module" src="./src/docs.ts"></script>',
+        "  </body>",
+        "</html>"
+    ]
+end
+
+# ------------------------------------------------------------------ output
+
+stay pages = [
+    { file: "index.html", html: homePage().flat(Infinity).join("\n") + "\n" },
+    { file: "docs.html", html: docsPage().flat(Infinity).join("\n") + "\n" }
+]
+
+woof JSON.stringify(pages)

@@ -32,7 +32,7 @@ jobs:
         run: |
           node dist/cli.js --version
           node dist/cli.js run examples/hello.bark | grep "Hello, world!"
-          node dist/cli.js check examples/*.bark
+          node dist/cli.js check examples/*.bark website/site.bark
           node dist/cli.js compile examples/fizzbuzz.bark -o /tmp/fizzbuzz.js
           node /tmp/fizzbuzz.js | tail -1 | grep Buzz
           printf '50\n' | node dist/cli.js run examples/guess.bark | head -2
